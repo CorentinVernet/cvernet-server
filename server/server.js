@@ -26,11 +26,13 @@ app.post("/contact", async (req, res) => {
 
   try {
     await transporter.sendMail({
-      from: email,
-      to: process.env.MAIL_USER,
+      from: process.env.MAIL_USER, // ton Gmail
+      to: process.env.MAIL_USER, // tu reçois le message
       subject: `Nouveau message de ${name}`,
       text: message,
+      replyTo: email, // email de l’utilisateur
     });
+
     res.json({ success: true, message: "Message envoyé ✅" });
   } catch (error) {
     console.error(error);
