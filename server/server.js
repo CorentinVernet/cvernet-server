@@ -2,17 +2,16 @@ const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware pour JSON
 app.use(express.json());
 
-// Route test
+// Test route
 app.get("/", (req, res) => {
   res.send("Hello depuis Render 🚀");
 });
 
-// Exemple API "contact"
+// Exemple pour contact form
 app.post("/contact", (req, res) => {
-  console.log(req.body);
+  console.log("Nouveau message :", req.body);
   res.json({ message: "Message reçu ✅" });
 });
 
