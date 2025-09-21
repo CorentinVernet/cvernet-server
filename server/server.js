@@ -1,20 +1,35 @@
 const express = require("express");
-const app = express();
-const PORT = process.env.PORT || 3000;
+const nodemailer = require("nodemailer");
+require("dotenv").config();
 
+const app = express();
 app.use(express.json());
 
-// Test route
-app.get("/", (req, res) => {
-  res.send("Hello depuis Render 🚀");
+app.post("/contact", async (req, res) => {
+  const { name, email, message } = req.body;
+
+  let transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.MAIL_USER,
+      pass: process.env.MAIL_PASS,
+    },
+  });
+
+  try {
+    await transporter.sendMail({
+      from: email,
+      to: process.env.MAIL_USER,
+      subject: `Nouveau message de ${name}`,
+      text: message,
+    });
+    res.json({ success: true, message: "Message envoyé ✅" });
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, message: "Erreur d’envoi ❌" });
+  }
 });
 
-// Exemple pour contact form
-app.post("/contact", (req, res) => {
-  console.log("Nouveau message :", req.body);
-  res.json({ message: "Message reçu ✅" });
-});
-
-app.listen(PORT, () => {
-  console.log(`Serveur lancé sur le port ${PORT}`);
-});
+app.listen(process.env.PORT || 3000, () =>
+  console.log("✅ Serveur backend lancé")
+);
