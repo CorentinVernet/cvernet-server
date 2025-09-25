@@ -18,6 +18,14 @@ app.get("/", (req, res) => {
 app.post("/contact", upload.array("attachments"), async (req, res) => {
   const { name, email, message } = req.body;
 
+  // ✅ Vérif email côté serveur
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Adresse email invalide ❌" });
+  }
+
   const attachments = req.files.map((file) => ({
     filename: file.originalname,
     path: file.path,
@@ -47,7 +55,7 @@ app.post("/contact", upload.array("attachments"), async (req, res) => {
     res.json({ success: true, message: "Message envoyé ✅" });
   } catch (error) {
     console.error(error);
-    res.json({ success: false, message: "Erreur d’envoi ❌" });
+    res.status(500).json({ success: false, message: "Erreur d’envoi ❌" });
   }
 });
 
